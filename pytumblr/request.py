@@ -12,7 +12,7 @@ class TumblrRequest(object):
     A simple request object that lets us query the Tumblr API
     """
 
-    def __init__(self, consumer_key, consumer_secret="", oauth_token="", oauth_secret="", host="http://api.tumblr.com"):
+    def __init__(self, consumer_key, consumer_secret="", oauth_token="", oauth_secret="", host="http://api.tumblr.com/v2"):
         self.host = host
         self.consumer = oauth.Consumer(key=consumer_key, secret=consumer_secret)
         self.token = oauth.Token(key=oauth_token, secret=oauth_secret)
@@ -24,7 +24,7 @@ class TumblrRequest(object):
         :param url: a string, the url you are requesting
         :param params: a dict, the key-value of all the paramaters needed
                        in the request
-        :returns: a dict parsed of the JSON response
+        :returns: JSON response
         """
         url = self.host + url
         if params:
@@ -37,7 +37,7 @@ class TumblrRequest(object):
         except RedirectLimit, e:
             resp, content = e.args
 
-        return self.json_parse(content)
+        return content
 
     def post(self, url, params={}, files=[]):
         """
@@ -48,7 +48,7 @@ class TumblrRequest(object):
                        in the request
         :param files: a list, the list of tuples of files
 
-        :returns: a dict parsed of the JSON response
+        :returns: JSON response
         """
         url = self.host + url
         try:
@@ -59,7 +59,7 @@ class TumblrRequest(object):
                 resp, content = client.request(url, method="POST", body=urllib.urlencode(params))
                 return self.json_parse(content)
         except urllib2.HTTPError, e:
-            return self.json_parse(e.read())
+            return e.read()
 
     def json_parse(self, content):
         """

@@ -31,7 +31,7 @@ class TumblrRestClient(object):
         """
         Gets the information about the current given user
 
-        :returns: A dict created from the JSON response
+        :returns: JSON response
         """
         return self.send_api_request("get", "/v2/user/info")
 
@@ -47,18 +47,22 @@ class TumblrRestClient(object):
         url = "/v2/blog/%s/avatar/%d" % (blogname, size)
         return self.send_api_request("get", url)
 
-    def likes(self, **kwargs):
+    def likes(self, offset=0, limit=20):
         """
         Gets the current given user's likes
-        :param limit: an int, the number of likes you want returned
-        :param offset: an int, the like you want to start at, for pagination.
+        :param limit: an int, the number of likes you want returned, max 20
+        :param offset: an int, the like you want to start at, for pagination
 
-            # Start at the 20th like and get 20 more likes.
-            client.likes({'offset': 20, 'limit': 20})
+            # Start at the 20th like.
+            client.likes(20)
 
-        :returns: A dict created from the JSON response
+            # Start at the 20th like and get 2 more likes.
+            client.likes(20, 2)
+
+        :returns: JSON response
         """
-        return self.send_api_request("get", "/v2/user/likes", kwargs, ["limit", "offset"])
+	params = {"offset":offset, "limit":limit}
+        return self.send_api_request("get", "/v2/user/likes", params, ["limit", "offset"])
 
     def following(self, **kwargs):
         """
